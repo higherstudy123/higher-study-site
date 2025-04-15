@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chemistry All Units Combined</title>
+  <style>
+    body { font-family: Arial; background: white; margin: 20px; color: #004080; }
+    .question { margin-bottom: 20px; }
+    .option {
+      display: block; margin: 5px 0; padding: 10px;
+      background: #d0ebff; border: none; border-radius: 6px; cursor: pointer;
+    }
+    .option.disabled { background: #eee; cursor: not-allowed; }
+    .correct { color: green; font-weight: bold; margin-top: 5px; }
+    .incorrect { color: red; font-weight: bold; margin-top: 5px; }
+    .score { font-size: 20px; color: green; margin-bottom: 10px; }
+    .summary { margin-top: 20px; }
+    .summary-item { margin-bottom: 10px; }
+  </style>
+  <script>
+    let current = 0;
+    let score = 0;
+    const questionsList = [
+      {
+        q: "What happens to covalent radius across a period?",
+        a: "It decreases",
+        options: ["It increases", "It decreases", "It stays the same", "It fluctuates"]
+      },
+      {
+        q: "Which bonding is present in NaCl?",
+        a: "Ionic",
+        options: ["Covalent", "Metallic", "Ionic", "Hydrogen"]
+      },
+      {
+        q: "What subatomic particle determines an element's identity?",
+        a: "Proton",
+        options: ["Electron", "Neutron", "Proton", "Nucleus"]
+      },
+      {
+        q: "Which of these is a network covalent substance?",
+        a: "Diamond",
+        options: ["Water", "Oxygen", "Diamond", "Methane"]
+      },
+      {
+        q: "What causes London dispersion forces?",
+        a: "Temporary dipoles",
+        options: ["Permanent dipoles", "Ions", "Hydrogen bonds", "Temporary dipoles"]
+      },
+      {
+        q: "What does OIL RIG stand for?",
+        a: "Oxidation is loss, reduction is gain",
+        options: [
+          "Oxidation includes losing, reducing is gaining",
+          "Oxidation is losing energy",
+          "Oxidation is loss, reduction is gain",
+          "Oxidation and reduction go together"
+        ]
+      },
+      {
+        q: "Which factor increases the rate of reaction by increasing collision frequency?",
+        a: "Concentration",
+        options: ["Catalyst", "Concentration", "Particle size", "All of the above"]
+      },
+      {
+        q: "What is the minimum energy needed for a reaction to occur?",
+        a: "Activation energy",
+        options: ["Threshold energy", "Kinetic energy", "Bond energy", "Activation energy"]
+      }
+    ];
+    const questions = questionsList.sort(() => Math.random() - 0.5);
+    const results = [];
+
+    function loadQuestion() {
+      const q = questions[current];
+      document.getElementById("question").textContent = q.q;
+      const options = document.getElementById("options");
+      options.innerHTML = "";
+      q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.className = "option";
+        btn.onclick = () => checkAnswer(btn, opt);
+        options.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(btn, selected) {
+      const q = questions[current];
+      const buttons = document.querySelectorAll(".option");
+      buttons.forEach(b => b.classList.add("disabled"));
+      const feedback = document.createElement("div");
+
+      if (selected === q.a) {
+        score++;
+        btn.classList.add("correct");
+        feedback.textContent = "✓ Correct!";
+        feedback.className = "correct";
+        results.push({ question: q.q, selected, correct: true });
+      } else {
+        btn.classList.add("incorrect");
+        feedback.textContent = "✗ Incorrect! Correct answer: " + q.a;
+        feedback.className = "incorrect";
+        results.push({ question: q.q, selected, correct: false, correctAnswer: q.a });
+      }
+
+      btn.parentElement.appendChild(feedback);
+      setTimeout(() => {
+        current++;
+        if (current < questions.length) {
+          loadQuestion();
+        } else {
+          showSummary();
+        }
+      }, 1200);
+    }
+
+    function showSummary() {
+      const quiz = document.getElementById("quiz");
+      quiz.innerHTML = `<p class='score'>You scored ${score} out of ${questions.length}</p>`;
+      const summary = document.createElement("div");
+      summary.className = "summary";
+      results.forEach((res, i) => {
+        const item = document.createElement("div");
+        item.className = "summary-item";
+        item.innerHTML = `<strong>Q${i + 1}:</strong> ${res.question}<br>` +
+                         (res.correct ? "✓ Correct" : `✗ Incorrect (Your answer: ${res.selected}, Correct: ${res.correctAnswer})`);
+        summary.appendChild(item);
+      });
+      quiz.appendChild(summary);
+    }
+
+    window.onload = loadQuestion;
+  </script>
+</head>
+<body>
+  <h1>Chemistry – All Units Combined</h1>
+  <div id="quiz">
+    <div id="question" class="question"></div>
+    <div id="options"></div>
+  </div>
+</body>
+</html>
